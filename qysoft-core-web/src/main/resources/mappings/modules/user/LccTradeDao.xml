@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.user.dao.LccTradeDao">
+    
+	<sql id="lccTradeColumns">
+		a.id AS "id",
+		a.block_id AS "blockId",
+		a.roll_out AS "rollOut",
+		a.hash_code_left AS "hashCodeLeft",
+		a.hash_code_right AS "hashCodeRight",
+		a.confirm_num AS "confirmNum",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="lccTradeJoins">
+	</sql>
+    
+	<select id="get" resultType="LccTrade">
+		SELECT 
+			<include refid="lccTradeColumns"/>
+		FROM lcc_trade a
+		<include refid="lccTradeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="LccTrade">
+		SELECT 
+
+			<include refid="lccTradeColumns"/>
+		FROM lcc_trade a
+		<include refid="lccTradeJoins"/>
+		<where>
+			1=1
+			<if test="hashCodeLeft !='' and hashCodeLeft != null">
+				AND a.hash_code_left = #{hashCodeLeft}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date DESC limit 9
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="LccTrade">
+		SELECT 
+			<include refid="lccTradeColumns"/>
+		FROM lcc_trade a
+		<include refid="lccTradeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lcc_trade(
+			id,
+			block_id,
+			roll_out,
+			hash_code_left,
+			hash_code_right,
+			confirm_num,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{blockId},
+			#{rollOut},
+			#{hashCodeLeft},
+			#{hashCodeRight},
+			#{confirmNum},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lcc_trade SET 	
+			block_id = #{blockId},
+			roll_out = #{rollOut},
+			hash_code_left = #{hashCodeLeft},
+			hash_code_right = #{hashCodeRight},
+			confirm_num = #{confirmNum},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lcc_trade SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

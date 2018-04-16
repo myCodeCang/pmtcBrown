@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.user.dao.LccBlockDao">
+    
+	<sql id="lccBlockColumns">
+		a.id AS "id",
+		a.trade_num AS "tradeNum",
+		a.all_send AS "allSend",
+		a.data_size AS "dataSize",
+		a.degree_difficulty AS "degreeDifficulty",
+		a.random AS "random",
+		a.hash_code AS "hashCode",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="lccBlockJoins">
+	</sql>
+    
+	<select id="get" resultType="LccBlock">
+		SELECT 
+			<include refid="lccBlockColumns"/>
+		FROM lcc_block a
+		<include refid="lccBlockJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="LccBlock">
+		SELECT 
+
+			<include refid="lccBlockColumns"/>
+		FROM lcc_block a
+		<include refid="lccBlockJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date DESC limit 5
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="LccBlock">
+		SELECT 
+			<include refid="lccBlockColumns"/>
+		FROM lcc_block a
+		<include refid="lccBlockJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lcc_block(
+			id,
+			trade_num,
+			all_send,
+			data_size,
+			degree_difficulty,
+			random,
+			hash_code,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{tradeNum},
+			#{allSend},
+			#{dataSize},
+			#{degreeDifficulty},
+			#{random},
+			#{hashCode},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lcc_block SET 	
+			trade_num = #{tradeNum},
+			all_send = #{allSend},
+			data_size = #{dataSize},
+			degree_difficulty = #{degreeDifficulty},
+			random = #{random},
+			hash_code = #{hashCode},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lcc_block SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
